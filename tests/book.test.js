@@ -135,4 +135,23 @@ describe('/books', () => {
       });
     });
   });
+
+  describe('validation tests', () => {
+    it('return an error if value is empty', async () => {
+      const response = await request(app).post('/book').send({
+        author: '',
+        title: 'book title',
+      });
+      expect(response.status).to.equal(400);
+      expect(response.body.error.validatorKey).to.equal('notEmpty');
+    });
+    it('return an error if value is null', async () => {
+      const response = await request(app).post('/book').send({
+        name: null,
+        title: 'author',
+      });
+      expect(response.status).to.equal(400);
+      expect(response.body.error.validatorKey).to.equal('is_null');
+    });
+  });
 });

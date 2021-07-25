@@ -43,7 +43,7 @@ describe('/readers', () => {
         Reader.create({
           name: 'Arya Stark',
           email: 'vmorgul@me.com',
-          password: '1234',
+          password: '12341234',
         }),
         Reader.create({
           name: 'Lyra Belacqua',
@@ -63,7 +63,7 @@ describe('/readers', () => {
 
           expect(reader.name).to.equal(expected.name);
           expect(reader.email).to.equal(expected.email);
-          expect(reader.password).to.equal(expected.password);
+          expect(reader.password).to.equal(undefined);
         });
       });
     });
@@ -76,7 +76,7 @@ describe('/readers', () => {
         expect(response.status).to.equal(200);
         expect(response.body.name).to.equal(reader.name);
         expect(response.body.email).to.equal(reader.email);
-        expect(response.body.password).to.equal(reader.password);
+        expect(response.body.password).to.equal(undefined);
       });
 
       it('returns a 404 if the reader does not exist', async () => {
@@ -125,6 +125,52 @@ describe('/readers', () => {
         const response = await request(app).delete('/reader/12345');
         expect(response.status).to.equal(404);
         expect(response.body.error).to.equal('The reader could not be found.');
+      });
+    });
+
+    describe('validation tests', () => {
+      it('returns an error if email is invalid', async () => {
+        const response = await request(app).post('/reader').send({
+          name: 'test name',
+          email: 'future_ms_darcy',
+          password: 'password123',
+        });
+        expect(response.status).to.equal(400);
+        expect(response.body.error.validatorKey).to.equal('isEmail');
+      });
+
+      it('returns an error if password length is too short', async () => {
+        const response = await request(app).post('/reader').send({
+          name: 'test name',
+          email: 'future_ms_darcy@name.com',
+          password: '123',
+        });
+        expect(response.status).to.equal(400);
+        expect(response.body.error.validatorKey).to.equal('len');
+      });
+      it('return an error if value is empty', async () => {
+        const response = await request(app).post('/reader').send({
+          name: '',
+          email: 'future_ms_darcy@email.com',
+          password: '123123123',
+        });
+        expect(response.status).to.equal(400);
+        expect(response.body.error.validatorKey).to.equal('notEmpty');
+      });
+      it('return an error if value is null', async () => {
+        const response = await request(app).post('/reader').send({
+          name: null,
+          email: 'future_ms_darcy@gmail.com',
+          password: '123123123',
+        });
+        expect(response.status).to.equal(400);
+        expect(response.body.error.validatorKey).to.equal('is_null');
+      });
+
+      it('does not return password', async () => {
+        const response = await request(app).get('/reader').send();
+        expect(response.status).to.equal(200);
+        expect(response.body.password).to.equal(undefined);
       });
     });
   });

@@ -1,4 +1,5 @@
 const { Book } = require('../models');
+const controllerFunctions = require('../utils/controllerFunctions');
 
 async function create(req, res) {
   const data = {
@@ -7,53 +8,23 @@ async function create(req, res) {
     genre: req.body.genre,
     ISBN: req.body.ISBN,
   };
-  Book.create(data).then((book) => res.status(201).json(book));
+  controllerFunctions.createItem(req, res, data, Book);
 }
 
 async function read(req, res) {
-  Book.findAll().then((book) => res.status(200).json(book));
+  controllerFunctions.readItems(req, res, Book);
 }
 
 async function readOne(req, res) {
-  Book.findByPk(req.params.id)
-    .then((book) => {
-      if (!book) {
-        throw Error;
-      } else {
-        res.status(200).json(book);
-      }
-    })
-    .catch(() =>
-      res.status(404).json({ error: 'The book could not be found.' })
-    );
+  controllerFunctions.readItem(req, res, Book);
 }
 
 async function update(req, res) {
-  Book.update(req.body, { where: { id: req.params.id } })
-    .then((updatedRows) => {
-      if (updatedRows == 0) {
-        throw Error;
-      } else {
-        res.status(200).json(updatedRows);
-      }
-    })
-    .catch(() =>
-      res.status(404).json({ error: 'The book could not be found.' })
-    );
+  controllerFunctions.updateItem(req, res, Book);
 }
 
 async function destroy(req, res) {
-  Book.destroy({ where: { id: req.params.id } })
-    .then((deletedRows) => {
-      if (!deletedRows) {
-        throw Error;
-      } else {
-        res.status(204).json(deletedRows);
-      }
-    })
-    .catch(() =>
-      res.status(404).json({ error: 'The book could not be found.' })
-    );
+  controllerFunctions.deleteItem(req, res, Book);
 }
 
 module.exports = { create, read, readOne, update, destroy };

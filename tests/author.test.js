@@ -32,13 +32,13 @@ describe('/author', () => {
     beforeEach(async () => {
       authors = await Promise.all([
         Author.create({
-          author: 'Irvine Welsh'
+          author: 'Irvine Welsh',
         }),
         Author.create({
-          author: 'William Boyd'
+          author: 'William Boyd',
         }),
         Author.create({
-          author: 'JKR'
+          author: 'JKR',
         }),
       ]);
     });
@@ -118,7 +118,7 @@ describe('/author', () => {
   describe('validation tests', () => {
     it('return an error if value is empty', async () => {
       const response = await request(app).post('/author').send({
-        author: ''
+        author: '',
       });
       expect(response.status).to.equal(400);
       expect(response.body.error.validatorKey).to.equal('notEmpty');

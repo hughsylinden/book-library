@@ -1,3 +1,4 @@
+const { Genre, Book, Author, Reader } = require('../models');
 function removePassword(obj) {
   const nopwObj = obj;
   if ('password' in nopwObj) {
@@ -6,7 +7,8 @@ function removePassword(obj) {
   return nopwObj;
 }
 
-function createItem(req, res, data, model) {
+function createItem(req, res, model) {
+  const data = req.body;
   model
     .create(data)
     .then((obj) => res.status(201).json(removePassword(obj.dataValues)))
@@ -41,28 +43,50 @@ function createItem(req, res, data, model) {
 }
 
 function readItems(req, res, model) {
-  model.findAll().then((items) => {
-    const newArray = items.map((obj) =>    
-      removePassword(obj.dataValues)
-    )
-    res.status(200).json(newArray)
-  })
+  let query = '';
+  if (model.name === 'Book') {
+    query = [Genre, Author, Reader];
+  }
+  if (
+    model.name === 'Genre' ||
+    model.name === 'Reader' ||
+    model.name === 'Author'
+  ) {
+    query = Book;
+  }
+  model.findAll({ include: query }).then((items) => {
+    const newArray = items.map((obj) => removePassword(obj.dataValues));
+    res.status(200).json(newArray);
+  });
 }
 
 function readItem(req, res, model) {
+  let query = '';
+  if (model.name === 'Book') {
+    query = [Genre, Author, Reader];
+  }
+  if (
+    model.name === 'Genre' ||
+    model.name === 'Reader' ||
+    model.name === 'Author'
+  ) {
+    query = Book;
+  }
   model
-    .findByPk(req.params.id)
+    .findByPk(req.params.id, { include: query })
     .then((obj) => {
       if (!obj) {
-        throw Error;
+        res
+        .status(404)
+        .json({ error: `The ${model.name.toLowerCase()} could not be found.` })
       } else {
         res.status(200).json(removePassword(obj.dataValues));
       }
     })
-    .catch(() =>
+    .catch((error) =>
       res
-        .status(404)
-        .json({ error: `The ${model.name.toLowerCase()} could not be found.` })
+        .status(500)
+        .json(error)
     );
 }
 
@@ -73,7 +97,7 @@ function updateItem(req, res, model) {
       if (updatedRows == 0) {
         throw Error;
       } else {
-        res.status(200).json(updatedRows);
+        res.status(200).json(`Number of updated rows: ${updatedRows}`);
       }
     })
     .catch(() =>
@@ -90,7 +114,7 @@ function deleteItem(req, res, model) {
       if (!deletedRows) {
         throw Error;
       } else {
-        res.status(204).json(deletedRows);
+        res.status(204).json(`Number of deleted rows: ${deletedRows}`);
       }
     })
     .catch(() =>

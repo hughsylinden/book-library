@@ -32,13 +32,13 @@ describe('/genre', () => {
     beforeEach(async () => {
       genres = await Promise.all([
         Genre.create({
-          genre: 'Sci-Fi'
+          genre: 'Sci-Fi',
         }),
         Genre.create({
-          genre: 'Ficton'
+          genre: 'Ficton',
         }),
         Genre.create({
-          genre: 'Horror'
+          genre: 'Horror',
         }),
       ]);
     });
@@ -118,7 +118,7 @@ describe('/genre', () => {
   describe('validation tests', () => {
     it('return an error if value is empty', async () => {
       const response = await request(app).post('/genre').send({
-        genre: ''
+        genre: '',
       });
       expect(response.status).to.equal(400);
       expect(response.body.error.validatorKey).to.equal('notEmpty');

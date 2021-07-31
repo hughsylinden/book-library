@@ -3,19 +3,10 @@ module.exports = (connection, DataTypes) => {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: true,
       },
-    },
-    author: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    genre: {
-      type: DataTypes.STRING,
     },
     ISBN: {
       type: DataTypes.STRING,

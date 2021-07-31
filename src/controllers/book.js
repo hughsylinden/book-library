@@ -2,13 +2,7 @@ const { Book } = require('../models');
 const controllerFunctions = require('../utils/controllerFunctions');
 
 async function create(req, res) {
-  const data = {
-    title: req.body.title,
-    author: req.body.author,
-    genre: req.body.genre,
-    ISBN: req.body.ISBN,
-  };
-  controllerFunctions.createItem(req, res, data, Book);
+  controllerFunctions.createItem(req, res, Book);
 }
 
 async function read(req, res) {

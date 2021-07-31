@@ -2,10 +2,7 @@ const { Author } = require('../models');
 const controllerFunctions = require('../utils/controllerFunctions');
 
 async function create(req, res) {
-  const data = {
-    author: req.body.author,
-  };
-  controllerFunctions.createItem(req, res, data, Author);
+  controllerFunctions.createItem(req, res, Author);
 }
 
 async function read(req, res) {

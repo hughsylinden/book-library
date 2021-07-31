@@ -2,10 +2,7 @@ const { Genre } = require('../models');
 const controllerFunctions = require('../utils/controllerFunctions');
 
 async function create(req, res) {
-  const data = {
-    genre: req.body.genre,
-  };
-  controllerFunctions.createItem(req, res, data, Genre);
+  controllerFunctions.createItem(req, res, Genre);
 }
 
 async function read(req, res) {

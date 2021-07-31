@@ -2,12 +2,7 @@ const { Reader } = require('../models');
 const controllerFunctions = require('../utils/controllerFunctions');
 
 async function create(req, res) {
-  const data = {
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-  };
-  controllerFunctions.createItem(req, res, data, Reader);
+  controllerFunctions.createItem(req, res, Reader);
 }
 
 async function read(req, res) {
